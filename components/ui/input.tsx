@@ -1,8 +1,10 @@
 import { forwardRef, type InputHTMLAttributes, type TextareaHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
+// 16px on phones: iOS Safari zooms the whole page when a focused field is
+// smaller than that, which leaves the layout scrolled sideways.
 const fieldBase =
-  "w-full rounded-card border bg-card text-[15px] text-ink placeholder:text-faint transition-colors duration-150 outline-none disabled:opacity-60 disabled:cursor-not-allowed";
+  "w-full rounded-card border bg-card text-base text-ink placeholder:text-faint transition-colors duration-150 outline-none disabled:opacity-60 disabled:cursor-not-allowed sm:text-[15px]";
 
 const fieldState =
   "border-rule-2 focus:border-press aria-[invalid=true]:border-oxide aria-[invalid=true]:focus:border-oxide";

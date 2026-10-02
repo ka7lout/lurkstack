@@ -72,7 +72,7 @@ export function CommentComposer({ postId, submitting, error, onSubmit }: Comment
             invalid={tooLong || invalid}
             aria-describedby={hintId}
             placeholder="Add to the thread…"
-            className="min-h-[72px] bg-card text-[14px]"
+            className="min-h-[72px] bg-card text-base sm:text-[14px]"
           />
           <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
             <p id={hintId} className={cn("label-xs tabular", tooLong ? "text-oxide" : "text-faint")}>

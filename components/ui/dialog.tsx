@@ -30,23 +30,31 @@ function DialogContent({
   return (
     <DialogPortal>
       <DialogOverlay />
-      <DialogPrimitive.Content
-        className={cn(
-          "fixed left-1/2 top-1/2 z-50 max-h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] max-w-[560px] -translate-x-1/2 -translate-y-1/2",
-          "animate-dialog overflow-y-auto rounded-card border border-rule bg-card p-5 sm:p-6",
-          "shadow-[0_28px_70px_-30px_rgba(20,20,20,0.55)] focus:outline-none",
-          className,
-        )}
-        {...props}
-      >
-        {children}
-        <DialogPrimitive.Close
-          className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-[4px] text-muted transition-colors hover:bg-paper-2 hover:text-ink focus-visible:outline-2 focus-visible:outline-press"
-          aria-label="Close dialog"
+      {/*
+        Centred with flexbox rather than translate classes. Tailwind v4 applies
+        `-translate-x-1/2` through the standalone `translate` property, which
+        composes with (rather than replaces) the `transform` in the dialog-in
+        keyframes — the panel was offset twice and slid off-screen on phones.
+      */}
+      <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
+        <DialogPrimitive.Content
+          className={cn(
+            "pointer-events-auto relative max-h-[calc(100dvh-2rem)] w-full max-w-[560px]",
+            "animate-dialog overflow-y-auto rounded-card border border-rule bg-card p-5 sm:p-6",
+            "shadow-[0_28px_70px_-30px_rgba(20,20,20,0.55)] focus:outline-none",
+            className,
+          )}
+          {...props}
         >
-          <X className="h-4 w-4" strokeWidth={2} />
-        </DialogPrimitive.Close>
-      </DialogPrimitive.Content>
+          {children}
+          <DialogPrimitive.Close
+            className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-[4px] text-muted transition-colors hover:bg-paper-2 hover:text-ink focus-visible:outline-2 focus-visible:outline-press"
+            aria-label="Close dialog"
+          >
+            <X className="h-4 w-4" strokeWidth={2} />
+          </DialogPrimitive.Close>
+        </DialogPrimitive.Content>
+      </div>
     </DialogPortal>
   );
 }

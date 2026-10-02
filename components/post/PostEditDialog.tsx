@@ -87,7 +87,7 @@ function EditForm({
           rows={6}
           invalid={tooLong}
           aria-describedby="edit-post-count"
-          className="min-h-[150px] font-sans text-[15px]"
+          className="min-h-[150px] font-sans text-base sm:text-[15px]"
           placeholder="Write your post…"
         />
 

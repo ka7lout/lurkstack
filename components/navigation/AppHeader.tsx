@@ -39,7 +39,7 @@ function NavLink({
       href={href}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-card px-2 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors",
+        "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-card px-1.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] transition-colors sm:px-2 sm:text-[11px] sm:tracking-[0.14em]",
         active ? "text-press" : "text-muted hover:text-ink",
       )}
     >
@@ -91,27 +91,36 @@ export function AppHeader() {
         </div>
       </div>
       <div className="border-b border-rule bg-paper/95 backdrop-blur-sm">
-        <div className="mx-auto flex h-14 max-w-[1180px] items-center gap-2 px-4 sm:gap-4 sm:px-6">
+        <div className="mx-auto flex h-14 max-w-[1180px] items-center gap-1.5 px-4 sm:gap-4 sm:px-6">
           <Wordmark />
           <span aria-hidden="true" className="hidden h-6 w-px bg-rule sm:block" />
           <nav aria-label="Primary" className="flex items-center gap-0.5 sm:gap-1">
             <NavLink href="/" label="Feed" icon={Home} active={path === "/"} />
-            <NavLink href={profileHref} label="Profile" icon={UserIcon} active={path.startsWith("/u/")} />
+            {/* Signed out this would only point at /login, duplicating the
+                button beside it — and on a 320px screen the two collide. */}
+            {session ? (
+              <NavLink
+                href={profileHref}
+                label="Profile"
+                icon={UserIcon}
+                active={path.startsWith("/u/")}
+              />
+            ) : null}
           </nav>
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
             {session ? (
               <UserMenu />
             ) : (
               <>
                 <Link
                   href="/login"
-                  className="inline-flex h-9 items-center rounded-card px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted hover:bg-paper-2 hover:text-ink"
+                  className="inline-flex h-9 shrink-0 items-center whitespace-nowrap rounded-card px-2 text-[10px] font-semibold uppercase tracking-[0.1em] text-muted hover:bg-paper-2 hover:text-ink sm:px-3 sm:text-[11px] sm:tracking-[0.14em]"
                 >
                   Sign in
                 </Link>
                 <Link
                   href="/signup"
-                  className="inline-flex h-9 items-center rounded-card bg-press px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-paper hover:bg-press-2"
+                  className="inline-flex h-9 shrink-0 items-center whitespace-nowrap rounded-card bg-press px-2.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-paper hover:bg-press-2 sm:px-3 sm:text-[11px] sm:tracking-[0.14em]"
                 >
                   Create account
                 </Link>

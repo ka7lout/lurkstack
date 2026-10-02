@@ -104,7 +104,7 @@ export function PostComposer({ creating, onSubmit }: PostComposerProps) {
             invalid={tooLong || (touched && empty && value.length > 0)}
             aria-describedby="post-composer-meta"
             placeholder="Share an update with everyone…"
-            className="min-h-[96px] bg-paper/60 text-[15.5px]"
+            className="min-h-[96px] bg-paper/60 text-base sm:text-[15.5px]"
           />
 
           <div className="mt-1.5 h-px w-full bg-rule" aria-hidden="true">
