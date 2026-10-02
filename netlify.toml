@@ -4,3 +4,9 @@
 
 [build.environment]
   NODE_VERSION = "22"
+
+# Declared explicitly so every build (Git CI and CLI) runs the Next.js
+# runtime, which generates the server function behind SSR, API and auth
+# routes. Without it a build can publish static files only and every route 404s.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
