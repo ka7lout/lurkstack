@@ -14,6 +14,27 @@ function positiveEnvInt(raw: string | undefined, fallback: number): number {
 const rateLimitWindow = positiveEnvInt(process.env.AUTH_RATE_LIMIT_WINDOW, 300);
 const rateLimitMax = positiveEnvInt(process.env.AUTH_RATE_LIMIT_MAX, 60);
 
+const isLocalhost = (value: string): boolean => /localhost|127\.0\.0\.1/.test(value);
+
+/**
+ * The origin Better Auth trusts for cookies and callbacks.
+ *
+ * A localhost value that has been copied into a real deployment is worse than
+ * no value at all: it makes every session cookie and redirect point at the
+ * developer's machine, so signing in appears to succeed and then does nothing.
+ * In production such a value is ignored in favour of the platform's own URL,
+ * which Netlify publishes as URL / DEPLOY_PRIME_URL.
+ */
+function resolveBaseURL(): string | undefined {
+  const explicit = process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL;
+  if (explicit && !(process.env.NODE_ENV === "production" && isLocalhost(explicit))) {
+    return explicit;
+  }
+  return process.env.URL ?? process.env.DEPLOY_PRIME_URL ?? undefined;
+}
+
+const baseURL = resolveBaseURL();
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -25,7 +46,15 @@ export const auth = betterAuth({
     },
   }),
   secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL,
+  baseURL,
+  // Netlify serves the same build from the production domain and from
+  // per-deploy preview hosts, so both have to be trusted or every mutation
+  // from a preview URL is rejected as cross-origin.
+  trustedOrigins: [
+    ...(baseURL ? [baseURL] : []),
+    "http://localhost:3000",
+    "https://*.netlify.app",
+  ],
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,

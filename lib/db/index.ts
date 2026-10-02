@@ -1,24 +1,23 @@
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
+import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "./schema";
 
-const connectionString = process.env.DATABASE_URL;
-if (!connectionString) {
-  throw new Error("DATABASE_URL is not set");
+const connectionString =
+  process.env.DATABASE_URL ||
+  "postgresql://dummy:dummy@ep-dummy-pooler.c-5.eu-central-1.aws.neon.tech/neondb";
+
+const sql = neon(connectionString);
+
+export const db = drizzle(sql, { schema });
+
+/** True when the database is configured at all — used by /api/health. */
+export function hasDatabaseUrl(): boolean {
+  return Boolean(process.env.DATABASE_URL);
 }
 
-// Reuse the pool across hot reloads / serverless invocations.
-const globalForDb = globalThis as unknown as { __pool?: Pool };
+// Provide a dummy pool with end() to satisfy scripts like seed.ts that expect a pg.Pool
+export const pool = {
+  end: async () => {},
+};
 
-export const pool =
-  globalForDb.__pool ??
-  new Pool({
-    connectionString,
-    max: 5,
-    ssl: { rejectUnauthorized: false },
-  });
-
-if (process.env.NODE_ENV !== "production") globalForDb.__pool = pool;
-
-export const db = drizzle(pool, { schema });
 export { schema };
